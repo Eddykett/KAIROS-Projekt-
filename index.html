@@ -2,10 +2,57 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SOPHIA KAIROS App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KAIROS Demo Chat</title>
+  <style>
+    body { font-family: sans-serif; background: #f3f4f6; margin: 0; padding: 2rem; }
+    .chatbox { max-width: 500px; margin: auto; background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .messages { max-height: 300px; overflow-y: auto; margin-bottom: 1rem; }
+    .msg { margin: 0.5rem 0; padding: 0.5rem; border-radius: 6px; }
+    .user { background: #dbeafe; text-align: right; }
+    .kairos { background: #e5e7eb; text-align: left; }
+    input { width: 80%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 0.5rem 1rem; margin-left: 0.5rem; background: #2563eb; color: white; border: none; border-radius: 5px; }
+  </style>
 </head>
 <body>
-  <div id="root"></div>
+  <div class="chatbox">
+    <h2>SOPHIA / KAIROS Demo</h2>
+    <div class="messages" id="messages"></div>
+    <input type="text" id="userInput" placeholder="Nachricht an KAIROS eingeben..." />
+    <button onclick="send()">Senden</button>
+  </div>
+
+  <script>
+    const messages = document.getElementById("messages");
+
+    function addMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = "msg " + sender;
+      div.innerText = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function send() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+      if (!text) return;
+      addMessage(text, "user");
+      input.value = "";
+
+      try {
+        const res = await fetch("https://dummyjson.com/comments/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ body: text })
+        });
+        const data = await res.json();
+        addMessage('Antwort: "' + data.body + '" erhalten.', "kairos");
+      } catch (e) {
+        addMessage("Fehler bei der Antwort. (Demo)", "kairos");
+      }
+    }
+  </script>
 </body>
 </html>
