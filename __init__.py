@@ -1,0 +1,1 @@
+# Gemeinsame Module für SOPHIA/KAIROS
